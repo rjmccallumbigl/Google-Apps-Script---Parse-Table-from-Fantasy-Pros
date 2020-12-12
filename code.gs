@@ -91,7 +91,7 @@ function parseObject(){
     }
     
     // Select the spreadsheet range and set values  
-    sheetName = searchArray[search].query.slice(3, 7);
+    sheetName = searchArray[search].query.slice(3, 7).toUpperCase();
     try{
       sheet = spreadsheet.insertSheet(sheetName);
     } catch (e){

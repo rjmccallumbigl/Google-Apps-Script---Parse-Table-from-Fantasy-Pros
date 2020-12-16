@@ -34,7 +34,8 @@ function onOpen() {
 *********************************************************************************************************/
 
 function getData(query) {
-  var url = "https://www.fantasypros.com/nfl/rankings/dynasty-overall.php";  
+   var url = "https://www.fantasypros.com/nfl/rankings/dynasty-overall.php";
+//  var url = "https://www.fantasypros.com/nfl/rankings/dynasty-superflex.php";  
   var fromText = query;
   var toText = ';';
   
@@ -80,24 +81,26 @@ function parseObject(){
   for (var search = 0; search < searchArray.length; search++){
     
     // Define an array of all the returned object's keys to act as the Header Row
-    keyArray.length = 0;
-    keyArray = Object.keys(searchArray[search].returnKey[0]);
-    playerArray.length = 0;
-    playerArray.push(keyArray);
-    
-    //  Capture players from returned data
-    for (var x = 0; x < searchArray[search].returnKey.length; x++){
-      playerArray.push(keyArray.map(function(key){ return searchArray[search].returnKey[x][key]}));
+    if (searchArray[search].returnKey != ""){
+      keyArray.length = 0;
+      keyArray = Object.keys(searchArray[search].returnKey[0]);
+      playerArray.length = 0;
+      playerArray.push(keyArray);
+      
+      //  Capture players from returned data
+      for (var x = 0; x < searchArray[search].returnKey.length; x++){
+        playerArray.push(keyArray.map(function(key){ return searchArray[search].returnKey[x][key]}));
+      }
+      
+      // Select the spreadsheet range and set values  
+      sheetName = searchArray[search].query.slice(3, 7).toUpperCase();
+      try{
+        sheet = spreadsheet.insertSheet(sheetName);
+      } catch (e){
+        sheet = spreadsheet.getSheetByName(sheetName).clear();
+      }
+      sheet.setFrozenRows(1);
+      sheet.getRange(1, 1, playerArray.length, playerArray[0].length).setValues(playerArray);
     }
-    
-    // Select the spreadsheet range and set values  
-    sheetName = searchArray[search].query.slice(3, 7).toUpperCase();
-    try{
-      sheet = spreadsheet.insertSheet(sheetName);
-    } catch (e){
-      sheet = spreadsheet.getSheetByName(sheetName).clear();
-    }
-    sheet.setFrozenRows(1);
-    sheet.getRange(1, 1, playerArray.length, playerArray[0].length).setValues(playerArray);
   }
 }

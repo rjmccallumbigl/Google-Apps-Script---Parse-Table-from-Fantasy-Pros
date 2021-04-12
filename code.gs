@@ -40,6 +40,10 @@ function getData(query) {
   var toText = ';';
   
   var content = UrlFetchApp.fetch(url).getContentText();
+  
+  // For debugging, download source text of URL to Google Drive since it's too much text for console log
+  //  DriveApp.createFile("Website Data.txt", content);
+  
   var scraped = Parser
   .data(content)
   .setLog()
